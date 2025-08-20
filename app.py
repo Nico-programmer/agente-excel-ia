@@ -9,7 +9,7 @@ BACKEND_URL = "https://agente-excel-ia-backend-production.up.railway.app/process
 # Configuración de la página web
 st.set_page_config(page_title="Agente IA para Excel", page_icon="🤖")
 st.title("🤖 Agente IA para Excel")
-st.markdown("Sube un archivo de Excel (.xlsx) y dame una instrucción en lenguaje natural.")
+st.markdown("Sube un archivo de Excel (.xlsx) y dame una instrucción en lenguaje natural. **También puedes dejar el espacio en blanco para crear un archivo nuevo.**")
 
 # Interfaz de usuario para subir el archivo y escribir la instrucción
 uploaded_file = st.file_uploader("Sube tu archivo de Excel:", type=["xlsx"])
@@ -17,11 +17,17 @@ instruction = st.text_area("Instrucción para el Agente IA:", height=100)
 
 # El botón que inicia el proceso
 if st.button("Procesar Archivo"):
-    if uploaded_file is not None and instruction:
+    # El archivo ahora es opcional
+    if instruction:
         with st.spinner('Procesando... esto puede tomar un momento.'):
-            files = {'file': uploaded_file.getvalue()}
+            # Prepara los datos para la petición
             data = {'instruction': instruction}
-            
+            files = {}
+
+            # Si el usuario subió un archivo, lo añade a la petición
+            if uploaded_file is not None:
+                files = {'file': uploaded_file.getvalue()}
+
             # Envía la petición al backend de Flask
             try:
                 response = requests.post(BACKEND_URL, files=files, data=data)
@@ -31,7 +37,7 @@ if st.button("Procesar Archivo"):
                     
                     # Botón para descargar el archivo modificado
                     st.download_button(
-                        label="Descargar Archivo Modificado",
+                        label="Descargar Archivo",
                         data=response.content,
                         file_name="archivo_modificado.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -42,4 +48,4 @@ if st.button("Procesar Archivo"):
             except requests.exceptions.ConnectionError:
                 st.error("No se pudo conectar al backend. Asegúrate de que el servidor Flask esté corriendo.")
     else:
-        st.warning("Por favor, sube un archivo e ingresa una instrucción.")
+        st.warning("Por favor, ingresa una instrucción para el agente.")
