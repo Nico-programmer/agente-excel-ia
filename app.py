@@ -3,7 +3,8 @@ import requests
 import os
 
 # Define la URL de tu backend
-BACKEND_URL = "http://127.0.0.1:5000/process-excel"
+BACKEND_URL = "https://agente-excel-ia-backend-production.up.railway.app/process-excel"
+# BACKEND_URL = "http://127.0.0.1:5000/process-excel"
 
 # Configuración de la página web
 st.set_page_config(page_title="Agente IA para Excel", page_icon="🤖")
